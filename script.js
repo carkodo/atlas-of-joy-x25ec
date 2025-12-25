@@ -76,7 +76,7 @@ function stampLocation(locationId) {
         localStorage.setItem('stampedLocations', JSON.stringify(stampedIds));
         
         // 4. Alert the user and reload the map to show the new icon color
-        alert(`Memory STAMPED! Visit the map again to see the gold checkmark.`);
+        alert(`You've made this memory ours forever.`);
         window.location.reload();
     }
 }
@@ -149,22 +149,33 @@ function checkPass() {
     const passInput = document.getElementById('pass-input');
     const overlay = document.getElementById('password-overlay');
     const error = document.getElementById('err-msg');
-    
-    // CHANGE 'ourword' to your actual secret word!
-    // I recommend using your anniversary date or a nickname.
-    const secretWord = 'library'; 
+    const secretWord = 'library'; // Keep your secret word here
 
     if (passInput.value.toLowerCase() === secretWord) {
-        // Fade out effect
+        // 1. Save the "Unlocked" status for this session
+        sessionStorage.setItem('atlasUnlocked', 'true');
+        
+        // 2. Hide the overlay
         overlay.style.opacity = '0';
         setTimeout(() => {
             overlay.style.display = 'none';
-        }, 800); // Matches the 0.8s transition in HTML
+        }, 800);
     } else {
         error.style.display = 'block';
-        passInput.value = ''; // Clear the input for a second try
+        passInput.value = '';
     }
 }
+
+// This runs as soon as the page loads
+window.onload = function() {
+    const isUnlocked = sessionStorage.getItem('atlasUnlocked');
+    const overlay = document.getElementById('password-overlay');
+    
+    // If they already typed the password, remove the screen immediately
+    if (isUnlocked === 'true' && overlay) {
+        overlay.style.display = 'none';
+    }
+};
 
 // Allow pressing "Enter" key to unlock
 document.getElementById('pass-input')?.addEventListener('keypress', function (e) {
